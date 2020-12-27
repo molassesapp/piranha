@@ -27,6 +27,8 @@ if (!!isToggleDisabled(featureTwo)) {
     console.log('Old Feature oldFeat2 is running');
 }
 
+console.log('New feature featureOne is running');
+
 if (true) {
     f();
 } else {

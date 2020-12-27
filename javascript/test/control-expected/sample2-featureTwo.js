@@ -15,7 +15,6 @@
 function get() {
     return isToggleDisabled(featureOne);
 }
-
 const a = isToggleDisabled(featureOne);
 
 if (!false && isToggleDisabled(featureOne)) {
@@ -36,6 +35,12 @@ if (false || isFlagTreated(featureOne)) {
 
 // This is the fourth comment
 console.log('New Feature featureTwo is running');
+
+if (molasses.isFlagTreated(featureOne)) {
+    console.log('New feature featureOne is running');
+} else {
+    console.log('Old feature oldFeat1 is running');
+}
 
 if (true) {
     f();

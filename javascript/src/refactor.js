@@ -317,7 +317,6 @@ class RefactorEngine {
     flagAPIToLiteral() {
         var methodHashMap = this.getMethodHashMap(this.properties);
         var engine = this;
-
         estraverse.replace(this.ast, {
             enter: function (node) {
                 if (node.type === 'CallExpression') {
@@ -336,6 +335,37 @@ class RefactorEngine {
                         }
                         if (nodeArgumentIsFlag) {
                             const flagType = methodHashMap.get(node.callee.name).flagType;
+                            engine.changed = true;
+
+                            if (
+                                (flagType === 'treated' && engine.behaviour) ||
+                                (flagType === 'control' && !engine.behaviour)
+                            ) {
+                                return engine.trueLiteral();
+                            } else {
+                                return engine.falseLiteral();
+                            }
+                        }
+                    } else if (
+                        node.callee.type === 'MemberExpression' &&
+                        node.callee.object &&
+                        node.callee.property &&
+                        methodHashMap.has(node.callee.property.name)
+                    ) {
+                        const argumentIndex = methodHashMap.get(node.callee.property.name).argumentIndex;
+                        const nodeArgument = node.arguments[argumentIndex];
+
+                        let nodeArgumentIsFlag = false;
+                        switch (nodeArgument.type) {
+                            case 'Identifier':
+                                nodeArgumentIsFlag = nodeArgument.name === engine.flagname;
+                                break;
+                            case 'Literal':
+                                nodeArgumentIsFlag = nodeArgument.value === engine.flagname;
+                                break;
+                        }
+                        if (nodeArgumentIsFlag) {
+                            const flagType = methodHashMap.get(node.callee.property.name).flagType;
                             engine.changed = true;
 
                             if (
